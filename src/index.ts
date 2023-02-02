@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express'
 import bodyParser from "body-parser"
 
-// create express app
+// create express app/
 const app = express()
 const port = process.env.PORT || 3000
 
