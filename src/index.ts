@@ -38,7 +38,7 @@ app.post('/videos', (req: Request, res: Response ) => {
         return res.status(400).send(error)
     } else {
         const newlyCreatedVideo = {
-            id: +(new Date()),
+            id: req.body.id,
             title: req.body.title,
             author: req.body.author,
             canBeDownloaded: req.body.canBeDownloaded,
