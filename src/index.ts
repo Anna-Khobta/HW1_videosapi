@@ -37,11 +37,11 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Hello Samurai')
 })
 
-app.get('/hometask_01/api/videos', (req: Request, res: Response ) => {
+app.get('/videos', (req: Request, res: Response ) => {
     res.status(200).send(videos)
     })
 
-app.post('/hometask_01/api/videos', (req: Request, res: Response ) => {
+app.post('/videos', (req: Request, res: Response ) => {
     if (req.body.title === null) {
         let error = {
             "errorsMessages": [
@@ -88,7 +88,7 @@ app.get('/hometask_01/api/videos/:id', (req: Request, res: Response ) => {
 
 })
 
-app.put('/hometask_01/api/videos/:id', (req: Request, res:Response) => {
+app.put('/videos/:id', (req: Request, res:Response) => {
     let findVideo = videos.find(p => p.id === +req.params.id)
     let resolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
     let elem = req.body.availableResolutions[0]
@@ -170,7 +170,7 @@ app.put('/hometask_01/api/videos/:id', (req: Request, res:Response) => {
     }
 })
 
-app.delete('/hometask_01/api/videos/:id', (req: Request, res: Response ) => {
+app.delete('/videos/:id', (req: Request, res: Response ) => {
     for (let i = 0; i < videos.length; i++) {
         if (videos[i].id === +req.params.id) {
         videos.splice(i, 1);
