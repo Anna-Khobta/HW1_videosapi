@@ -130,16 +130,15 @@ app.put('/hometask_01/api/videos/:id', (req: Request, res:Response) => {
         ]
     }
 
-    // //let errorPublicationDate = {
-    //     "errorsMessages": [
-    //         {
-    //             "message": "Please, use string format. Example 2023-02-02T16:16:44.219Z",
-    //             "field": "publicationDate"
-    //         }
-    //     ]
-    // }
-
-
+     function contains(resolutions:any,elem:any) {
+        let isExists = false;
+        for (let i = 0; i < resolutions.length; i++) {
+             if (elem === resolutions[i]) {
+                 isExists = true
+             }
+        }
+        return isExists
+    }
     if (findVideo) {
         if (req.body.title.length > 40) {
             return res.status(400).send(errorTitle)
@@ -147,7 +146,8 @@ app.put('/hometask_01/api/videos/:id', (req: Request, res:Response) => {
             return res.status(400).send(errorAuthor)
         } else if (typeof req.body.canBeDownloaded !== "boolean") {
             return res.status(400).send(errorCanBeDownloaded)
-        } else if (resolutions.includes(elem) == false) {
+        //} else if (resolutions.includes(elem) == false) {
+        } else if (!contains(resolutions, elem)) {
             return res.status(400).send(errorAvailableResolutions)
         } else if (req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1 || typeof req.body.minAgeRestriction !== "number") {
             return res.status(400).send(errorMinAgeRestriction)
@@ -168,10 +168,12 @@ app.put('/hometask_01/api/videos/:id', (req: Request, res:Response) => {
 
 app.delete('/hometask_01/api/videos/:id', (req: Request, res: Response ) => {
     for (let i = 0; i < videos.length; i++) {
+        if (videos[i].id === +req.params.id) {
         videos.splice(i, 1);
         res.send(204)
         return;
     }
+}
     res.send(404)
 })
 
