@@ -122,7 +122,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
             return res.status(400).send(errorTitle)
         } else if (req.body.author.length > 20) {
             return res.status(400).send(errorAuthor)
-        } else if (req.body.canBeDownloaded !== true || req.body.canBeDownloaded !== false ) {
+        } else if (!(typeof req.body.canBeDownloaded == "boolean")) {
             return res.status(400).send(errorCanBeDownloaded)
         //} else if (resolutions.includes(elem) == false) {
         } else if (!contains(resolutions, elem)) {
