@@ -33,6 +33,10 @@ const videos = [
 const parserMiddleware = bodyParser({})
 app.use(parserMiddleware)
 
+app.get('/', (req: Request, res: Response) => {
+    res.send('Hello Samurai')
+})
+
 app.get('/hometask_01/api/videos', (req: Request, res: Response ) => {
     res.status(200).send(videos)
     })
