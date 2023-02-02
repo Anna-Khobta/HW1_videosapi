@@ -5,37 +5,11 @@ import bodyParser from "body-parser"
 const app = express()
 const port = process.env.PORT || 3000
 
-const videos = [
-    {
-        "id": 0,
-        "title": "string",
-        "author": "string",
-        "canBeDownloaded": true,
-        "minAgeRestriction": null,
-        "createdAt": (new Date().toISOString()),
-        "publicationDate": (new Date().toISOString()),
-        "availableResolutions": [ "P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"
-        ]
-    },
-    {
-        "id": 1,
-        "title": "Anna",
-        "author": "Anna1",
-        "canBeDownloaded": true,
-        "minAgeRestriction": null,
-        "createdAt": (new Date().toISOString()),
-        "publicationDate": (new Date().toISOString()),
-        "availableResolutions": [ "P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"
-        ]
-    }
-]
+let videos = []
+
 
 const parserMiddleware = bodyParser({})
 app.use(parserMiddleware)
-
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello Samurai')
-})
 
 app.get('/videos', (req: Request, res: Response ) => {
     res.status(200).send(videos)
@@ -78,7 +52,7 @@ app.post('/videos', (req: Request, res: Response ) => {
     }
 })
 
-app.get('/hometask_01/api/videos/:id', (req: Request, res: Response ) => {
+app.get('/videos/:id', (req: Request, res: Response ) => {
     let findVideo = videos.find(p => p.id === +req.params.id)
     if (findVideo) {
         return res.status(200).send(findVideo)
@@ -179,6 +153,11 @@ app.delete('/videos/:id', (req: Request, res: Response ) => {
     }
 }
     res.send(404)
+})
+
+app.delete('/testing/all-data', (req: Request, res: Response ) => {
+    videos.splice(0, videos.length)
+    res.send(204)
 })
 
 //start app
