@@ -16,21 +16,21 @@ app.get('/videos', (req: Request, res: Response ) => {
     })
 
 app.post('/videos', (req: Request, res: Response ) => {
-    if (req.body.title === null) {
+    if (req.body.title === null || req.body.title.length > 40 ) {
         let error = {
             "errorsMessages": [
                 {
-                    "message": "The title is null. Please, write the title",
+                    "message": "The title is wrong. Please, write the title",
                     "field": "title"
                 }
             ]
         }
         return res.status(400).send(error)
-    } else if (req.body.author === null) {
+    } else if (req.body.author === null || req.body.author.length > 20 ) {
         let error = {
             "errorsMessages": [
                 {
-                    "message": "The author is null. Please, write the author",
+                    "message": "The author is wrong. Please, write the author",
                     "field": "author"
                 }
             ]
@@ -41,7 +41,7 @@ app.post('/videos', (req: Request, res: Response ) => {
             id: +(new Date()),
             title: req.body.title,
             author: req.body.author,
-            canBeDownloaded: true,
+            canBeDownloaded: req.body.canBeDownloaded,
             minAgeRestriction: null,
             createdAt: (new Date().toISOString()),
             publicationDate: (new Date().toISOString()),
@@ -122,7 +122,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
             return res.status(400).send(errorTitle)
         } else if (req.body.author.length > 20) {
             return res.status(400).send(errorAuthor)
-        } else if (typeof req.body.canBeDownloaded !== "boolean") {
+        } else if (req.body.canBeDownloaded !== true || req.body.canBeDownloaded !== false ) {
             return res.status(400).send(errorCanBeDownloaded)
         //} else if (resolutions.includes(elem) == false) {
         } else if (!contains(resolutions, elem)) {
