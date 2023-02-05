@@ -41,9 +41,6 @@ app.post('/videos', (req: Request, res: Response ) => {
     } if ( req.body.title.length > 40 || req.body.author.length > 20 || !(resolutions.includes(req.body.availableResolutions[0]))  )
         return res.status(400).send(error)
 
-
-
-
     else {
         const newlyCreatedVideo = {
             id: +(new Date()),
