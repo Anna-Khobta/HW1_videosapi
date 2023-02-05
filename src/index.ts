@@ -5,7 +5,8 @@ import bodyParser from "body-parser"
 const app = express()
 const port = process.env.PORT || 3000
 
-let videos = []
+let videos: any[] = []
+const resolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
 
 
 const parserMiddleware = bodyParser({})
@@ -16,32 +17,39 @@ app.get('/videos', (req: Request, res: Response ) => {
     })
 
 app.post('/videos', (req: Request, res: Response ) => {
-    if (req.body.title === null || req.body.title.length > 40 ) {
-        let error = {
-            "errorsMessages": [
-                {
-                    "message": "The title is wrong. Please, write the title",
-                    "field": "title"
-                }
-            ]
-        }
+    let error: { errorsMessages: any[] } = {errorsMessages: []}
+
+
+    if (req.body.title.length > 40) {
+        error.errorsMessages.push({
+            "message": "The title is wrong.",
+            "field": "title"
+        })
+    }
+    if (req.body.author.length > 20) {
+        error.errorsMessages.push({
+            "message": "The author is wrong.",
+            "field": "author"
+        })
+    }
+    if (!(resolutions.includes(req.body.availableResolutions[0]))) {
+        error.errorsMessages.push({
+            "message": "The availableResolutions is wrong.",
+            "field": "availableResolutions"
+        })
+
+    } if ( req.body.title.length > 40 || req.body.author.length > 20 || !(resolutions.includes(req.body.availableResolutions[0]))  )
         return res.status(400).send(error)
-    } else if (req.body.author === null || req.body.author.length > 20 ) {
-        let error = {
-            "errorsMessages": [
-                {
-                    "message": "The author is wrong. Please, write the author",
-                    "field": "author"
-                }
-            ]
-        }
-        return res.status(400).send(error)
-    } else {
+
+
+
+
+    else {
         const newlyCreatedVideo = {
-            id: req.body.id,
+            id: +(new Date()),
             title: req.body.title,
             author: req.body.author,
-            canBeDownloaded: req.body.canBeDownloaded,
+            canBeDownloaded: false,
             minAgeRestriction: null,
             createdAt: (new Date().toISOString()),
             publicationDate: (new Date(new Date().setDate(new Date().getDate() + 1)).toISOString()),
@@ -64,7 +72,7 @@ app.get('/videos/:id', (req: Request, res: Response ) => {
 
 app.put('/videos/:id', (req: Request, res:Response) => {
     let findVideo = videos.find(p => p.id === +req.params.id)
-    let resolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+
     let elem = req.body.availableResolutions[0]
 
     let errorTitle = {
@@ -117,8 +125,10 @@ app.put('/videos/:id', (req: Request, res:Response) => {
         }
         return isExists
     }
+
+
     if (findVideo) {
-        if (req.body.title.length > 40) {
+        if (req.body.title.length > 40 ||   {
             return res.status(400).send(errorTitle)
         } else if (req.body.author.length > 20) {
             return res.status(400).send(errorAuthor)
