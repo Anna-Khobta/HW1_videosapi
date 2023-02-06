@@ -70,35 +70,39 @@ app.get('/videos/:id', (req: Request, res: Response ) => {
 })
 
 app.put('/videos/:id', (req: Request, res:Response) => {
-
     let findVideo = videos.find(p => p.id === +req.params.id)
 
     if (findVideo) {
         if (req.body.title.length > 40 || typeof req.body.title === 'object') {
+            console.log('title invalid')
             error.errorsMessages.push({
                 "message": "The title is wrong",
                 "field": "title"
             })
         }
         if (req.body.author.length > 20) {
+            console.log('author invalid')
             error.errorsMessages.push({
                 "message": "The author is wrong.",
                 "field": "author"
             })
         }
-        if (!(resolutions.includes(req.body.availableResolutions[0]))) {
+        if (!resolutions.includes(req.body.availableResolutions[0])) {
+            console.log('resol invalid')
             error.errorsMessages.push({
                 "message": "The availableResolutions is wrong.",
                 "field": "availableResolutions"
             })
         }
         if (req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1) {
+            console.log('minAge invalid')
             error.errorsMessages.push({
                 "message": "The minAgeRestriction is wrong.",
                 "field": "minAgeRestriction"
             })
         }
         if (typeof req.body.canBeDownloaded === 'string') {
+            console.log('download invalid')
             error.errorsMessages.push({
                 "message": "The canBeDownloaded is wrong.",
                 "field": "canBeDownloaded"
@@ -111,18 +115,16 @@ app.put('/videos/:id', (req: Request, res:Response) => {
             return res.status(400).send(error)
 
 
-        else {
-            let updatedVideo = {
-                id: +req.params.id,
-                title: req.body.title || findVideo.title,
-                author: req.body.author || findVideo.author,
-                canBeDownloaded: req.body.canBeDownloaded || findVideo.canBeDownloaded,
-                minAgeRestriction: req.body.minAgeRestriction || findVideo.minAgeRestriction,
-                createdAt: findVideo.createdAt,
-                publicationDate: req.body.publicationDate || findVideo.publicationDate,
-                availableResolutions: req.body.availableResolutions || findVideo.availableResolutions
-            }
-            videos.push(updatedVideo)
+    else {
+                findVideo.id = +req.params.id,
+                findVideo.title = req.body.title,
+                findVideo.author = req.body.author,
+                findVideo.canBeDownloaded = req.body.canBeDownloaded || findVideo.canBeDownloaded,
+                findVideo.minAgeRestriction  = req.body.minAgeRestriction || findVideo.minAgeRestriction,
+                findVideo.createdAt  = findVideo.createdAt || findVideo.minAgeRestriction,
+                findVideo.publicationDate  = req.body.publicationDate || findVideo.publicationDate,
+                findVideo.availableResolutions  = req.body.availableResolutions || findVideo.availableResolutions
+            videos.push(findVideo)
             res.sendStatus(204)
         }
     }
