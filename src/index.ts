@@ -1,16 +1,16 @@
 import express, {Request, Response} from 'express'
-import bodyParser from "body-parser"
 
 // create express app/
 const app = express()
 const port = process.env.PORT || 3000
 
+app.use(express.json())
+
 let videos: any[] = []
 const resolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
 let error: { errorsMessages: any[] } = {errorsMessages: []}
 
-const parserMiddleware = bodyParser({})
-app.use(parserMiddleware)
+
 
 
 app.get('/videos', (req: Request, res: Response ) => {
@@ -123,7 +123,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
                 availableResolutions: req.body.availableResolutions || findVideo.availableResolutions
             }
             videos.push(updatedVideo)
-            res.status(204)
+            res.sendStatus(204)
         }
     }
 })
