@@ -16,9 +16,9 @@ app.get('/videos', (req: Request, res: Response ) => {
     res.status(200).send(videos)
     })
 
-app.post('/videos', (req: Request, res: Response ) => {
-    let error: { errorsMessages: any[] } = {errorsMessages: []}
+let error: { errorsMessages: any[] } = {errorsMessages: []}
 
+app.post('/videos', (req: Request, res: Response ) => {
 
     if (req.body.title.length > 40) {
         error.errorsMessages.push({
@@ -70,84 +70,57 @@ app.get('/videos/:id', (req: Request, res: Response ) => {
 app.put('/videos/:id', (req: Request, res:Response) => {
     let findVideo = videos.find(p => p.id === +req.params.id)
 
-    let elem = req.body.availableResolutions[0]
-
-    let errorTitle = {
-        "errorsMessages": [
-            {
-                "message": "The title is too long. Maximum length is 40 symbols",
-                "field": "title"
-            }
-        ]
-    }
-    let errorAuthor = {
-        "errorsMessages": [
-            {
-                "message": "The title is too long. Maximum length is 40 symbols",
-                "field": "title"
-            }
-        ]
-    }
-    let errorCanBeDownloaded = {
-        "errorsMessages": [
-            {
-                "message": "Please write true or false.",
-                "field": "canBeDownloaded"
-            }
-        ]
-    }
-    let errorAvailableResolutions = {
-        "errorsMessages": [
-            {
-                "message": "Please, select 1 of these properties: " + resolutions + ". And use [ ] to add Resolutions",
-                "field": "availableResolutions"
-            }
-        ]
-    }
-    let errorMinAgeRestriction = {
-        "errorsMessages": [
-            {
-                "message": "Please, use numbers. Available numbers from 1 to 18",
-                "field": "minAgeRestriction"
-            }
-        ]
-    }
-
-     function contains(resolutions:any,elem:any) {
+    function contains(resolutions: any, elem: any) {
         let isExists = false;
         for (let i = 0; i < resolutions.length; i++) {
-             if (elem === resolutions[i]) {
-                 isExists = true
-             }
+            if (elem === resolutions[i]) {
+                isExists = true
+            }
         }
         return isExists
     }
 
-
     if (findVideo) {
-        if (req.body.title.length > 40 ||   {
-            return res.status(400).send(errorTitle)
-        } else if (req.body.author.length > 20) {
-            return res.status(400).send(errorAuthor)
-        } else if (!(typeof req.body.canBeDownloaded === "boolean")) {
-            return res.status(400).send(errorCanBeDownloaded)
-        //} else if (resolutions.includes(elem) == false) {
-        } else if (!contains(resolutions, elem)) {
-            return res.status(400).send(errorAvailableResolutions)
-        } else if (req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1 || typeof req.body.minAgeRestriction !== "number") {
-            return res.status(400).send(errorMinAgeRestriction)
-        } else {
-            findVideo.title = req.body.title
-            findVideo.author = req.body.author
-            findVideo.canBeDownloaded = req.body.canBeDownloaded
-            findVideo.minAgeRestriction = req.body.minAgeRestriction
-            findVideo.availableResolutions = req.body.availableResolutions
-            findVideo.publicationDate = req.body.publicationDate
-            return res.send(findVideo)
+        if (req.body.title.length > 40) {
+            error.errorsMessages.push({
+                "message": "The title is wrong.",
+                "field": "title"
+            })
         }
+        if (req.body.author.length > 20) {
+            error.errorsMessages.push({
+                "message": "The author is wrong.",
+                "field": "author"
+            })
+        }
+        if (!(resolutions.includes(req.body.availableResolutions[0]))) {
+            error.errorsMessages.push({
+                "message": "The availableResolutions is wrong.",
+                "field": "availableResolutions"
+            })
+            if (req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1) {
+                error.errorsMessages.push({
+                    "message": "The minAgeRestriction is wrong.",
+                    "field": "minAgeRestriction"
+                })
+            }
+            if (req.body.title.length > 40 || req.body.author.length > 20 ||
+                !(resolutions.includes(req.body.availableResolutions[0])) ||
+                req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1)
+                return res.status(400).send(error)
 
-    } else {
-        return res.send(404)
+            if (typeof findVideo === 'undefined') {
+                return res.send(404)
+            } else {
+                findVideo.title = req.body.title
+                findVideo.author = req.body.author
+                findVideo.canBeDownloaded = req.body.canBeDownloaded
+                findVideo.minAgeRestriction = req.body.minAgeRestriction
+                findVideo.availableResolutions = req.body.availableResolutions
+                findVideo.publicationDate = req.body.publicationDate
+                return res.send(204)
+            }
+        }
     }
 })
 
