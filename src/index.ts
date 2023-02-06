@@ -7,20 +7,19 @@ const port = process.env.PORT || 3000
 
 let videos: any[] = []
 const resolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
-
+let error: { errorsMessages: any[] } = {errorsMessages: []}
 
 const parserMiddleware = bodyParser({})
 app.use(parserMiddleware)
+
 
 app.get('/videos', (req: Request, res: Response ) => {
     res.status(200).send(videos)
     })
 
-let error: { errorsMessages: any[] } = {errorsMessages: []}
-
 app.post('/videos', (req: Request, res: Response ) => {
 
-    if (req.body.title.length > 40 || typeof req.body.title === 'number' || typeof req.body.title === 'object' ) {
+    if (req.body.title.length > 40 ) {
         error.errorsMessages.push({
             "message": "The title is wrong.",
             "field": "title"
@@ -37,8 +36,9 @@ app.post('/videos', (req: Request, res: Response ) => {
             "message": "The availableResolutions is wrong.",
             "field": "availableResolutions"
         })
-
-    } if ( req.body.title.length > 40 || req.body.author.length > 20 || !(resolutions.includes(req.body.availableResolutions[0]))  )
+    }
+    if ( req.body.title.length > 40 || req.body.author.length > 20
+        || !(resolutions.includes(req.body.availableResolutions[0]))  )
         return res.status(400).send(error)
 
     else {
@@ -59,6 +59,7 @@ app.post('/videos', (req: Request, res: Response ) => {
 
 app.get('/videos/:id', (req: Request, res: Response ) => {
     let findVideo = videos.find(p => p.id === +req.params.id)
+
     if (findVideo) {
         return res.status(200).send(findVideo)
     } else {
@@ -70,6 +71,7 @@ app.get('/videos/:id', (req: Request, res: Response ) => {
 app.put('/videos/:id', (req: Request, res:Response) => {
     let findVideo = videos.find(p => p.id === +req.params.id)
 
+    let elem = req.body.availableResolutions[0]
     function contains(resolutions: any, elem: any) {
         let isExists = false;
         for (let i = 0; i < resolutions.length; i++) {
@@ -81,7 +83,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
     }
 
     if (findVideo) {
-        if (req.body.title.length > 40) {
+        if (req.body.title.length > 40 || typeof req.body.title === 'object' ) {
             error.errorsMessages.push({
                 "message": "The title is wrong",
                 "field": "title"
@@ -98,18 +100,26 @@ app.put('/videos/:id', (req: Request, res:Response) => {
                 "message": "The availableResolutions is wrong.",
                 "field": "availableResolutions"
             })
-            if (req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1) {
-                error.errorsMessages.push({
-                    "message": "The minAgeRestriction is wrong.",
-                    "field": "minAgeRestriction"
-                })
-            }
-            if (req.body.title.length > 40 || req.body.author.length > 20 ||
+        }
+        if (req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1) {
+            error.errorsMessages.push({
+                "message": "The minAgeRestriction is wrong.",
+                "field": "minAgeRestriction"
+            })
+        }
+        if ( typeof req.body.canBeDownloaded === 'string') {
+            error.errorsMessages.push({
+                        "message": "The canBeDownloaded is wrong.",
+                        "field": "canBeDownloaded"
+            })
+        }
+        if (req.body.title.length > 40 || req.body.author.length > 20 ||
                 !(resolutions.includes(req.body.availableResolutions[0])) ||
-                req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1)
-                return res.status(400).send(error)
+                req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1
+                || typeof req.body.canBeDownloaded === 'string' || typeof req.body.title === 'object') {
+            return res.status(400).send(error) }
 
-            if (typeof findVideo === 'undefined') {
+    if (typeof findVideo === 'undefined') {
                 return res.send(404)
             } else {
                 findVideo.title = req.body.title
@@ -121,8 +131,8 @@ app.put('/videos/:id', (req: Request, res:Response) => {
                 return res.send(204)
             }
         }
-    }
 })
+
 
 app.delete('/videos/:id', (req: Request, res: Response ) => {
     for (let i = 0; i < videos.length; i++) {
