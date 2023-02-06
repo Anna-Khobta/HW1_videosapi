@@ -128,6 +128,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
             res.sendStatus(204)
         }
     }
+    return res.sendStatus(404)
 })
 
 
