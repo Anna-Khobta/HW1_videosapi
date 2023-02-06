@@ -10,22 +10,19 @@ let videos: any[] = []
 const resolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
 let error: { errorsMessages: any[] } = {errorsMessages: []}
 
-
-
-
 app.get('/videos', (req: Request, res: Response ) => {
     res.status(200).send(videos)
     })
 
 app.post('/videos', (req: Request, res: Response ) => {
 
-    if (req.body.title.length > 40 ) {
+    if (!req.body.title || req.body.title.length > 40 ) {
         error.errorsMessages.push({
             "message": "The title is wrong.",
             "field": "title"
         })
     }
-    if (req.body.author.length > 20) {
+    if (!req.body.author || req.body.author.length > 20) {
         error.errorsMessages.push({
             "message": "The author is wrong.",
             "field": "author"
@@ -37,8 +34,7 @@ app.post('/videos', (req: Request, res: Response ) => {
             "field": "availableResolutions"
         })
     }
-    if ( req.body.title.length > 40 || req.body.author.length > 20
-        || !(resolutions.includes(req.body.availableResolutions[0]))  )
+    if (error.errorsMessages.length > 0)
         return res.status(400).send(error)
 
     else {
@@ -73,14 +69,14 @@ app.put('/videos/:id', (req: Request, res:Response) => {
     let findVideo = videos.find(p => p.id === +req.params.id)
 
     if (findVideo) {
-        if (req.body.title.length > 40 || typeof req.body.title === 'object') {
+        if (!req.body.title || req.body.title.length > 40) {
             console.log('title invalid')
             error.errorsMessages.push({
                 "message": "The title is wrong",
                 "field": "title"
             })
         }
-        if (req.body.author.length > 20) {
+        if (!req.body.author || req.body.author.length > 20) {
             console.log('author invalid')
             error.errorsMessages.push({
                 "message": "The author is wrong.",
@@ -108,10 +104,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
                 "field": "canBeDownloaded"
             })
         }
-        if (req.body.title.length > 40 || req.body.author.length > 20 ||
-            !(resolutions.includes(req.body.availableResolutions[0])) ||
-            req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1
-            || typeof req.body.canBeDownloaded === 'string' || typeof req.body.title === 'object')
+        if (error.errorsMessages.length > 0)
             return res.status(400).send(error)
 
 
