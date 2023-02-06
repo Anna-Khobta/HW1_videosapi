@@ -20,7 +20,7 @@ let error: { errorsMessages: any[] } = {errorsMessages: []}
 
 app.post('/videos', (req: Request, res: Response ) => {
 
-    if (req.body.title.length > 40) {
+    if (req.body.title.length > 40 || typeof req.body.title === 'number' || typeof req.body.title === 'object' ) {
         error.errorsMessages.push({
             "message": "The title is wrong.",
             "field": "title"
@@ -114,9 +114,9 @@ app.put('/videos/:id', (req: Request, res:Response) => {
             } else {
                 findVideo.title = req.body.title
                 findVideo.author = req.body.author
+                findVideo.availableResolutions = req.body.availableResolutions
                 findVideo.canBeDownloaded = req.body.canBeDownloaded
                 findVideo.minAgeRestriction = req.body.minAgeRestriction
-                findVideo.availableResolutions = req.body.availableResolutions
                 findVideo.publicationDate = req.body.publicationDate
                 return res.send(204)
             }
