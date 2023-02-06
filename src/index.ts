@@ -17,7 +17,7 @@ app.get('/videos', (req: Request, res: Response ) => {
 app.post('/videos', (req: Request, res: Response ) => {
 
     let elemRes = req.body.availableResolutions
-    const hasAllElems = elemRes.every( elem => resolutions.includes(elem) );
+    const hasAllElems = elemRes.every( (elem:any) => resolutions.includes(elem) )
 
 
     if (error.errorsMessages.length > 0) {
@@ -76,7 +76,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
     let findVideo = videos.find(p => p.id === +req.params.id)
 
     let elemRes = req.body.availableResolutions
-    const hasAllElems = elemRes.every( elem => resolutions.includes(elem) );
+    const hasAllElems = elemRes.every( (elem:any) => resolutions.includes(elem) );
 
     if (error.errorsMessages.length > 0) {
         error.errorsMessages.splice(0, error.errorsMessages.length)
