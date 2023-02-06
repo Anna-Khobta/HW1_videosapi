@@ -58,6 +58,7 @@ app.post('/videos', (req: Request, res: Response ) => {
 })
 
 app.get('/videos/:id', (req: Request, res: Response ) => {
+
     let findVideo = videos.find(p => p.id === +req.params.id)
 
     if (findVideo) {
@@ -69,21 +70,11 @@ app.get('/videos/:id', (req: Request, res: Response ) => {
 })
 
 app.put('/videos/:id', (req: Request, res:Response) => {
+
     let findVideo = videos.find(p => p.id === +req.params.id)
 
-    let elem = req.body.availableResolutions[0]
-    function contains(resolutions: any, elem: any) {
-        let isExists = false;
-        for (let i = 0; i < resolutions.length; i++) {
-            if (elem === resolutions[i]) {
-                isExists = true
-            }
-        }
-        return isExists
-    }
-
     if (findVideo) {
-        if (req.body.title.length > 40 || typeof req.body.title === 'object' ) {
+        if (req.body.title.length > 40 || typeof req.body.title === 'object') {
             error.errorsMessages.push({
                 "message": "The title is wrong",
                 "field": "title"
@@ -107,30 +98,34 @@ app.put('/videos/:id', (req: Request, res:Response) => {
                 "field": "minAgeRestriction"
             })
         }
-        if ( typeof req.body.canBeDownloaded === 'string') {
+        if (typeof req.body.canBeDownloaded === 'string') {
             error.errorsMessages.push({
-                        "message": "The canBeDownloaded is wrong.",
-                        "field": "canBeDownloaded"
+                "message": "The canBeDownloaded is wrong.",
+                "field": "canBeDownloaded"
             })
         }
         if (req.body.title.length > 40 || req.body.author.length > 20 ||
-                !(resolutions.includes(req.body.availableResolutions[0])) ||
-                req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1
-                || typeof req.body.canBeDownloaded === 'string' || typeof req.body.title === 'object') {
-            return res.status(400).send(error) }
+            !(resolutions.includes(req.body.availableResolutions[0])) ||
+            req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1
+            || typeof req.body.canBeDownloaded === 'string' || typeof req.body.title === 'object')
+            return res.status(400).send(error)
 
-    if (typeof findVideo === 'undefined') {
-                return res.status(404)
-            } else {
-                findVideo.title = req.body.title
-                findVideo.author = req.body.author
-                findVideo.availableResolutions = req.body.availableResolutions
-                findVideo.canBeDownloaded = req.body.canBeDownloaded
-                findVideo.minAgeRestriction = req.body.minAgeRestriction
-                findVideo.publicationDate = req.body.publicationDate
-                return res.status(204)
+
+        else {
+            let updatedVideo = {
+                id: +req.params.id,
+                title: req.body.title || findVideo.title,
+                author: req.body.author || findVideo.author,
+                canBeDownloaded: req.body.canBeDownloaded || findVideo.canBeDownloaded,
+                minAgeRestriction: req.body.minAgeRestriction || findVideo.minAgeRestriction,
+                createdAt: findVideo.createdAt,
+                publicationDate: req.body.publicationDate || findVideo.publicationDate,
+                availableResolutions: req.body.availableResolutions || findVideo.availableResolutions
             }
+            videos.push(updatedVideo)
+            res.status(204)
         }
+    }
 })
 
 
