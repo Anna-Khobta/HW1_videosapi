@@ -120,7 +120,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
             return res.status(400).send(error) }
 
     if (typeof findVideo === 'undefined') {
-                return res.send(404)
+                return res.status(404)
             } else {
                 findVideo.title = req.body.title
                 findVideo.author = req.body.author
@@ -128,7 +128,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
                 findVideo.canBeDownloaded = req.body.canBeDownloaded
                 findVideo.minAgeRestriction = req.body.minAgeRestriction
                 findVideo.publicationDate = req.body.publicationDate
-                return res.send(204)
+                return res.status(204)
             }
         }
 })
