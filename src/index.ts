@@ -16,11 +16,14 @@ app.get('/videos', (req: Request, res: Response ) => {
 
 app.post('/videos', (req: Request, res: Response ) => {
 
+    let elemRes = req.body.availableResolutions
+
+    const hasAllElems = elemRes.every( elem => resolutions.includes(elem) );
+
+
     if (error.errorsMessages.length > 0) {
         error.errorsMessages.splice(0, error.errorsMessages.length)
     }
-
-
     if (!req.body.title || req.body.title.length > 40 ) {
         error.errorsMessages.push({
             "message": "The title is wrong.",
@@ -33,7 +36,7 @@ app.post('/videos', (req: Request, res: Response ) => {
             "field": "author"
         })
     }
-    if (!(resolutions.includes(req.body.availableResolutions[0]))) {
+    if (hasAllElems === false) {
         error.errorsMessages.push({
             "message": "The availableResolutions is wrong.",
             "field": "availableResolutions"
