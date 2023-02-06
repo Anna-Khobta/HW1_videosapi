@@ -108,10 +108,15 @@ app.put('/videos/:id', (req: Request, res:Response) => {
             })
         }
         if (typeof req.body.canBeDownloaded === 'string') {
-            console.log('download invalid')
             error.errorsMessages.push({
                 "message": "The canBeDownloaded is wrong.",
                 "field": "canBeDownloaded"
+            })
+        }
+        if (typeof req.body.publicationDate === 'number') {
+            error.errorsMessages.push({
+                "message": "The publicationDate is wrong.",
+                "field": "publicationDate"
             })
         }
         if (error.errorsMessages.length > 0)
