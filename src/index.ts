@@ -83,7 +83,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
     if (findVideo) {
         if (req.body.title.length > 40) {
             error.errorsMessages.push({
-                "message": "The title is wrong.",
+                "message": "The title is wrong",
                 "field": "title"
             })
         }
