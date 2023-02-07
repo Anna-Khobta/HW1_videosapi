@@ -8,7 +8,6 @@
 # dependencies
 /node_modules
 /.pnp
-dist
 .pnp.js
 
 # testing

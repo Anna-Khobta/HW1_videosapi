@@ -19,7 +19,6 @@ app.post('/videos', (req: Request, res: Response ) => {
     let elemRes = req.body.availableResolutions
     const hasAllElems = elemRes.every( (elem:any) => resolutions.includes(elem) )
 
-
     if (error.errorsMessages.length > 0) {
         error.errorsMessages.splice(0, error.errorsMessages.length)
     }
@@ -41,6 +40,7 @@ app.post('/videos', (req: Request, res: Response ) => {
             "field": "availableResolutions"
         })
     }
+
     if (error.errorsMessages.length > 0)
         return res.status(400).send(error)
 
@@ -139,7 +139,7 @@ app.put('/videos/:id', (req: Request, res:Response) => {
     return res.sendStatus(404)
 })
 
-
+// через find index, delete
 app.delete('/videos/:id', (req: Request, res: Response ) => {
     for (let i = 0; i < videos.length; i++) {
         if (videos[i].id === +req.params.id) {
